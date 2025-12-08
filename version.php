@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin = new stdClass();
-$plugin->version   = 2025090100;
+$plugin->version   = 2025120100;
 $plugin->requires  = 2024042200;      // YYYYMMDDHH (This is the release version for Moodle 4.4).
 $plugin->cron      = 0;
 $plugin->component = 'tool_usersuspension'; // Full name of the plugin (used for diagnostics).
@@ -39,4 +39,5 @@ $plugin->dependencies = [];
 $plugin->supported = [
     404,
     405,
+    500,
 ];
