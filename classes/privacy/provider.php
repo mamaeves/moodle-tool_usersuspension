@@ -47,10 +47,10 @@ use core_privacy\local\request\approved_userlist;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
-        \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\plugin\provider,
-        \core_privacy\local\request\core_userlist_provider {
-
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider
+{
     /**
      * Provides meta data that is stored about a user with tool_usersuspension
      *
@@ -140,7 +140,7 @@ class provider implements
 
             // The data is organised in: {? }/hammering.json.
             // where X is the attempt number.
-            array_walk($alldata, function($statusdata, $contextid) {
+            array_walk($alldata, function ($statusdata, $contextid) {
                 $context = \context::instance_by_id($contextid);
                 writer::with_context($context)->export_related_data(
                     ['tool_usersuspension'],
@@ -156,16 +156,16 @@ class provider implements
             $statuslogs = $DB->get_recordset_sql($sql, $params);
             foreach ($statuslogs as $statuslog) {
                 $alldata[$contextid][] = (object)[
-                        'userid' => $statuslog->userid,
-                        'mailedto' => $statuslog->mailedto,
-                        'timecreated' => transform::datetime($statuslog->timecreated),
-                    ];
+                    'userid' => $statuslog->userid,
+                    'mailedto' => $statuslog->mailedto,
+                    'timecreated' => transform::datetime($statuslog->timecreated),
+                ];
             }
             $statuslogs->close();
 
             // The data is organised in: {?}/hammerlogs.json.
             // where X is the attempt number.
-            array_walk($alldata, function($statuslog, $contextid) {
+            array_walk($alldata, function ($statuslog, $contextid) {
                 $context = \context::instance_by_id($contextid);
                 writer::with_context($context)->export_related_data(
                     ['tool_usersuspension'],
@@ -181,16 +181,16 @@ class provider implements
             $exclusions = $DB->get_recordset_sql($sql, $params);
             foreach ($exclusions as $exclusion) {
                 $alldata[$contextid][] = (object)[
-                        'userid' => $exclusion->refid,
-                        'type' => $exclusion->type,
-                        'timecreated' => transform::datetime($exclusion->timecreated),
-                    ];
+                    'userid' => $exclusion->refid,
+                    'type' => $exclusion->type,
+                    'timecreated' => transform::datetime($exclusion->timecreated),
+                ];
             }
             $exclusions->close();
 
             // The data is organised in: {?}/hammerlogs.json.
             // where X is the attempt number.
-            array_walk($alldata, function($exclusion, $contextid) {
+            array_walk($alldata, function ($exclusion, $contextid) {
                 $context = \context::instance_by_id($contextid);
                 writer::with_context($context)->export_related_data(
                     ['tool_usersuspension'],
@@ -287,5 +287,4 @@ class provider implements
             $DB->delete_records('tool_usersuspension_log', ['userid' => $userid]);
         }
     }
-
 }

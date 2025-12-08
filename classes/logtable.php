@@ -41,7 +41,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class logtable extends \table_sql {
-
     /**
      * Localised 'suspended' string
      *
@@ -77,8 +76,8 @@ class logtable extends \table_sql {
      */
     public function __construct($showhistory = true) {
         global $USER;
-        parent::__construct(__CLASS__. '-' . $USER->id . '-' . ((int)$showhistory));
-        $this->showhistory = (bool)$showhistory;
+        parent::__construct(__CLASS__ . '-' . $USER->id . '-' . ((int) $showhistory));
+        $this->showhistory = (bool) $showhistory;
         $this->strsuspended = get_string('status:suspended', 'tool_usersuspension');
         $this->strunsuspended = get_string('status:unsuspended', 'tool_usersuspension');
         $this->strdeleted = get_string('status:deleted', 'tool_usersuspension');
@@ -118,8 +117,9 @@ class logtable extends \table_sql {
             get_string('thead:timecreated', 'tool_usersuspension'),
             get_string('thead:action', 'tool_usersuspension'),
         ]);
-        $fields = 'l.id,l.userid,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
-                ' AS name,l.status,l.mailsent,l.mailedto,l.timecreated,NULL AS action';
+        $fields = 'l.id,l.userid,' .
+            $DB->sql_fullname('u.firstname', 'u.lastname') .
+            ' AS name,l.status,l.mailsent,l.mailedto,l.timecreated,NULL AS action';
         $table = ($this->showhistory ? 'tool_usersuspension_log' : 'tool_usersuspension_status');
         $from = '{' . $table . '} l LEFT JOIN {user} u ON l.userid=u.id';
         $where = '1 = 1';
@@ -180,10 +180,9 @@ class logtable extends \table_sql {
      */
     protected function get_action($row, $action) {
         $actionstr = 'str' . $action;
-        return '<a href="' . new \moodle_url($this->baseurl,
-                ['action' => $action, 'id' => $row->id, 'sesskey' => sesskey()]) .
-                '" alt="' . $this->{$actionstr} .
-                '">' . $this->get_action_image($action) . '</a>';
+        $params = ['action' => $action, 'id' => $row->id, 'sesskey' => sesskey()];
+        return '<a href="' . new \moodle_url($this->baseurl, $params) .
+            '" alt="' . $this->{$actionstr} .
+            '">' . $this->get_action_image($action) . '</a>';
     }
-
 }

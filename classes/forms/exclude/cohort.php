@@ -42,7 +42,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cohort extends \moodleform {
-
     /**
      * form definition
      */
@@ -51,15 +50,39 @@ class cohort extends \moodleform {
         $mform = $this->_form;
 
         $pfx = \tool_usersuspension\util::get_prefix();
-        $excludedcohorts = $DB->get_fieldset_select('tool_usersuspension_excl', 'refid',
-                "type = :{$pfx}type", ["{$pfx}type" => 'cohort']);
-        list($sqlin, $params) = $DB->get_in_or_equal($excludedcohorts, SQL_PARAMS_QM, 'param', false, true);
-        $cohorts = $DB->get_records_sql_menu('SELECT id,name FROM {cohort} WHERE id '. $sqlin, $params);
+        $excludedcohorts = $DB->get_fieldset_select(
+            'tool_usersuspension_excl',
+            'refid',
+            "type = :{$pfx}type",
+            ["{$pfx}type" => 'cohort']
+        );
+        [$sqlin, $params] = $DB->get_in_or_equal(
+            $excludedcohorts,
+            SQL_PARAMS_QM,
+            'param',
+            false,
+            true
+        );
+        $cohorts = $DB->get_records_sql_menu(
+            'SELECT id,name FROM {cohort} WHERE id ' . $sqlin,
+            $params
+        );
         if (count($cohorts) == 0) {
-            $mform->addElement('static', 'xstat1', '', get_string('info:no-exclusion-cohorts', 'tool_usersuspension'));
+            $mform->addElement(
+                'static',
+                'xstat1',
+                '',
+                get_string('info:no-exclusion-cohorts', 'tool_usersuspension')
+            );
         } else {
             $size = min(10, max(0, count($cohorts)));
-            $select1 = $mform->addElement('select', 'cohort', get_string('cohort', 'cohort'), $cohorts, ['size' => $size]);
+            $select1 = $mform->addElement(
+                'select',
+                'cohort',
+                get_string('cohort', 'cohort'),
+                $cohorts,
+                ['size' => $size]
+            );
             $select1->setMultiple(true);
             $mform->addRule('cohort', get_string('required'), 'required', null, 'client');
         }
@@ -77,8 +100,10 @@ class cohort extends \moodleform {
         $data = $this->get_data();
         if ($data === null) {
             return false;
-            \tool_usersuspension\util::print_notification(get_string('msg:exclusion:cohort:none-selected',
-                'tool_usersuspension'), 'success');
+            \tool_usersuspension\util::print_notification(
+                get_string('msg:exclusion:cohort:none-selected', 'tool_usersuspension'),
+                'success'
+            );
         }
 
         if (!empty($data->cohort)) {
@@ -86,10 +111,11 @@ class cohort extends \moodleform {
                 $cohort = $DB->get_record('cohort', ['id' => $cohortid]);
                 $record = (object) ['type' => 'cohort', 'refid' => $cohortid, 'timecreated' => time()];
                 $DB->insert_record('tool_usersuspension_excl', $record);
-                \tool_usersuspension\util::print_notification(get_string('msg:exclusion:record:cohort:inserted',
-                            'tool_usersuspension', $cohort), 'success');
+                \tool_usersuspension\util::print_notification(
+                    get_string('msg:exclusion:record:cohort:inserted', 'tool_usersuspension', $cohort),
+                    'success'
+                );
             }
         }
     }
-
 }

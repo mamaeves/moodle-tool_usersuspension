@@ -29,6 +29,7 @@
 namespace tool_usersuspension\task\unsuspend;
 
 defined('MOODLE_INTERNAL') || die;
+
 use tool_usersuspension\config;
 use tool_usersuspension\processor\csv as csvprocessor;
 
@@ -44,7 +45,6 @@ require_once($CFG->libdir . '/csvlib.class.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class fromfolder extends \core\task\scheduled_task {
-
     /**
      * Return the localised name for this task
      *
@@ -60,17 +60,17 @@ class fromfolder extends \core\task\scheduled_task {
      * @return void
      */
     public function execute() {
-        if (!(bool)config::get('enabled')) {
+        if (!(bool) config::get('enabled')) {
             mtrace(get_string('config:tool:disabled', 'tool_usersuspension'));
             return;
         }
-        if (!(bool)config::get('enableunsuspendfromfolder')) {
+        if (!(bool) config::get('enableunsuspendfromfolder')) {
             mtrace(get_string('config:unsuspendfromfolder:disabled', 'tool_usersuspension'));
             return;
         }
         $uploadedfile = config::get('uploadfolder') . '/' . config::get('unsuspenduploadfilename');
         if (!file_exists($uploadedfile) || is_dir($uploadedfile)) {
-            mtrace('CSV File "'.$uploadedfile.'" does not exist: break');
+            mtrace('CSV File "' . $uploadedfile . '" does not exist: break');
             return;
         }
 
@@ -96,5 +96,4 @@ class fromfolder extends \core\task\scheduled_task {
             mtrace(get_string('msg:file-not-writeable', 'tool_usersuspension', $uploadedfile));
         }
     }
-
 }

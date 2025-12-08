@@ -1,4 +1,11 @@
-Version 4.0.4 (build 2025090100)
+Version 4.0.6 (build 2025120100)
+* Integrated PR#17 (https://github.com/sebsoftnl/moodle-tool_usersuspension/pull/17)
+  Thanks, nersesov (https://github.com/nersesov)
+* Massive changes due to CI checks.
+
+----------
+
+Version 4.0.4/4.0.5 (build 2025090100)
 * integrated changes from https://github.com/sebsoftnl/moodle-tool_usersuspension/pull/14
   Thanks, 1katoda (https://github.com/1katoda)
 * integrated changes from https://github.com/sebsoftnl/moodle-tool_usersuspension/pull/15

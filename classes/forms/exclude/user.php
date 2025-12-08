@@ -28,6 +28,9 @@
 
 namespace tool_usersuspension\forms\exclude;
 
+use tool_usersuspension\exclude\user\selector\potential;
+use tool_usersuspension\exclude\user\selector\current;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
@@ -42,12 +45,12 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user extends \moodleform {
-
     /**
      * User Selector for currently known users
      * @var \tool_usersuspension\exclude\user\selector\current
      */
     protected $currentuserselector;
+
     /**
      * User Selector for currently known users
      * @var \tool_usersuspension\exclude\user\selector\potential
@@ -61,8 +64,8 @@ class user extends \moodleform {
         global $OUTPUT;
         // Create the user selector objects.
         $options = ['accesscontext' => \context_system::instance()];
-        $this->currentuserselector = new \tool_usersuspension\exclude\user\selector\current('removeselect', $options);
-        $this->potentialuserselector = new \tool_usersuspension\exclude\user\selector\potential('addselect', $options);
+        $this->currentuserselector = new current('removeselect', $options);
+        $this->potentialuserselector = new potential('addselect', $options);
         $mform = $this->_form;
         // This element is only here so the form will actually get submitted.
         $mform->addElement('hidden', 'processor', 1);
@@ -72,15 +75,15 @@ class user extends \moodleform {
         $html = '
           <table summary="" class="suspendexcludetable generaltable generalbox boxaligncenter" cellspacing="0">
             <tr><td id="existingcell"><p><label for="removeselect">' .
-                get_string('label:users:excluded', 'tool_usersuspension') . '</label></p>';
+            get_string('label:users:excluded', 'tool_usersuspension') . '</label></p>';
         $html .= $this->currentuserselector->display(true);
         $html .= '</td><td id="buttonscell"><div id="controls">';
         $html .= '<input name="add" id="add" type="submit" value="' . $OUTPUT->larrow() .
-                '&nbsp;' . get_string('add') . '" title="' . get_string('add') . '" /><br />
+            '&nbsp;' . get_string('add') . '" title="' . get_string('add') . '" /><br />
                 <input name="remove" id="remove" type="submit" value="' . get_string('remove') .
-                '&nbsp;' . $OUTPUT->rarrow() . '" title="' . get_string('remove') . '" />';
+            '&nbsp;' . $OUTPUT->rarrow() . '" title="' . get_string('remove') . '" />';
         $html .= '</div></td><td id="potentialcell"><p><label for="addselect">' .
-                get_string('label:users:potential', 'tool_usersuspension') . '</label></p>';
+            get_string('label:users:potential', 'tool_usersuspension') . '</label></p>';
         $html .= $this->potentialuserselector->display(true);
         $html .= '</td></tr></table>';
         $mform->addElement('html', $html);
@@ -98,8 +101,8 @@ class user extends \moodleform {
             return false;
         }
 
-        $add = (bool)optional_param('add', false, PARAM_BOOL);
-        $remove = (bool)optional_param('remove', false, PARAM_BOOL);
+        $add = (bool) optional_param('add', false, PARAM_BOOL);
+        $remove = (bool) optional_param('remove', false, PARAM_BOOL);
 
         if ($remove) {
             // Remove user(s).
@@ -111,7 +114,13 @@ class user extends \moodleform {
                         $DB->delete_records('tool_usersuspension_excl', $obj);
                         $removeuser->fullname = fullname($removeuser);
                         \tool_usersuspension\util::print_notification(
-                            get_string('msg:exclusion:record:user:deleted', 'tool_usersuspension', $removeuser), 'success');
+                            get_string(
+                                'msg:exclusion:record:user:deleted',
+                                'tool_usersuspension',
+                                $removeuser
+                            ),
+                            'success'
+                        );
                     }
                 }
             }
@@ -123,10 +132,16 @@ class user extends \moodleform {
                     $obj = ['type' => 'user', 'refid' => $adduser->id];
                     if (!$DB->record_exists('tool_usersuspension_excl', $obj)) {
                         $obj['timecreated'] = time();
-                        $DB->insert_record('tool_usersuspension_excl', (object)$obj);
+                        $DB->insert_record('tool_usersuspension_excl', (object) $obj);
                         $adduser->fullname = fullname($adduser);
-                        \tool_usersuspension\util::print_notification(get_string('msg:exclusion:record:user:inserted',
-                            'tool_usersuspension', $adduser), 'success');
+                        \tool_usersuspension\util::print_notification(
+                            get_string(
+                                'msg:exclusion:record:user:inserted',
+                                'tool_usersuspension',
+                                $adduser
+                            ),
+                            'success'
+                        );
                     }
                 }
             }
@@ -134,5 +149,4 @@ class user extends \moodleform {
         $this->potentialuserselector->invalidate_selected_users();
         $this->currentuserselector->invalidate_selected_users();
     }
-
 }

@@ -28,6 +28,9 @@
 
 namespace tool_usersuspension\forms;
 
+use tool_usersuspension\processor\csv;
+use tool_usersuspension\processor\util;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
@@ -42,7 +45,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upload extends \moodleform {
-
     /**
      * form definition
      */
@@ -53,32 +55,56 @@ class upload extends \moodleform {
 
         // Example CSV.
         $urldownloadcsv = new \moodle_url($CFG->wwwroot . '/admin/tool/usersuspension/assets/example.csv');
-        $link = '<a href="' . $urldownloadcsv
-                . '" target="_blank">' . get_string('download-sample-csv', 'tool_usersuspension') . '</a>';
+        $link = '<a href="' . $urldownloadcsv . '" target="_blank">' .
+            get_string('download-sample-csv', 'tool_usersuspension') . '</a>';
 
-        $mform->addElement('static', 'uploadfiledesc', '',
-                get_string('form:static:uploadfile:desc', 'tool_usersuspension') . $link);
+        $mform->addElement(
+            'static',
+            'uploadfiledesc',
+            '',
+            get_string('form:static:uploadfile:desc', 'tool_usersuspension') . $link
+        );
         $maxbytes = 1048576; // 1 MB.
-        $mform->addElement('filepicker', 'userfile', get_string('file'), null,
-                ['maxbytes' => $maxbytes, 'accepted_types' => ['.csv']]);
+        $mform->addElement(
+            'filepicker',
+            'userfile',
+            get_string('file'),
+            null,
+            ['maxbytes' => $maxbytes, 'accepted_types' => ['.csv']]
+        );
 
         $delims = [';' => ';', '|' => '|', ',' => ','];
-        $select1 = $mform->addElement('select', 'delimiter', get_string('csv:delimiter', 'tool_usersuspension'), $delims);
+        $select1 = $mform->addElement(
+            'select',
+            'delimiter',
+            get_string('csv:delimiter', 'tool_usersuspension'),
+            $delims
+        );
         $mform->setType('delimiter', PARAM_TEXT);
         $select1->setSelected(';');
 
         $enclosures = ['"' => '"', "'" => "'"];
-        $select2 = $mform->addElement('select', 'enclosure', get_string('csv:enclosure', 'tool_usersuspension'), $enclosures);
+        $select2 = $mform->addElement(
+            'select',
+            'enclosure',
+            get_string('csv:enclosure', 'tool_usersuspension'),
+            $enclosures
+        );
         $mform->setType('enclosure', PARAM_TEXT);
         $select2->setSelected('"');
 
         $options = [
-            \tool_usersuspension\processor\csv::MODE_SUSPEND => get_string('suspend', 'tool_usersuspension'),
-            \tool_usersuspension\processor\csv::MODE_UNSUSPEND => get_string('unsuspend', 'tool_usersuspension'),
+            csv::MODE_SUSPEND => get_string('suspend', 'tool_usersuspension'),
+            csv::MODE_UNSUSPEND => get_string('unsuspend', 'tool_usersuspension'),
         ];
-        $mform->addElement('select', 'suspendmode', get_string('suspendmode', 'tool_usersuspension'), $options);
+        $mform->addElement(
+            'select',
+            'suspendmode',
+            get_string('suspendmode', 'tool_usersuspension'),
+            $options
+        );
         $mform->setType('suspendmode', PARAM_INT);
-        $mform->setDefault('suspendmode', \tool_usersuspension\processor\csv::MODE_SUSPEND);
+        $mform->setDefault('suspendmode', csv::MODE_SUSPEND);
 
         $this->add_action_buttons(true, get_string('csv:upload:continue', 'tool_usersuspension'));
     }
@@ -102,13 +128,15 @@ class upload extends \moodleform {
         }
         $uploadedfile = $this->save_file('userfile', $file);
         if (!$uploadedfile) {
-            \tool_usersuspension\util::print_notification(get_string('msg:file:upload:fail',
-                    'tool_usersuspension'), 'error');
+            util::print_notification(
+                get_string('msg:file:upload:fail', 'tool_usersuspension'),
+                'error'
+            );
             return;
         }
 
         // Process upload.
-        $proc = new \tool_usersuspension\processor\csv();
+        $proc = new csv();
         $proc->set_file($file);
         $proc->set_delimiter($data->delimiter);
         $proc->set_enclosure($data->enclosure);
@@ -120,5 +148,4 @@ class upload extends \moodleform {
         // Delete uploaded file.
         unlink($file);
     }
-
 }

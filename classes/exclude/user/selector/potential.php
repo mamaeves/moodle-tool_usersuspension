@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/user/selector/lib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class potential extends \user_selector_base {
-
     /**
      * Create a new instance.
      *
@@ -62,14 +61,14 @@ class potential extends \user_selector_base {
     public function find_users($search) {
         global $DB;
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
-        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        [$wherecondition, $params] = $this->search_sql($search, 'u');
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u WHERE {$wherecondition}";
 
-        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        [$sort, $sortparams] = users_order_by_sql('u', $search, $this->accesscontext);
         $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {
@@ -97,5 +96,4 @@ class potential extends \user_selector_base {
         $options = parent::get_options();
         return $options;
     }
-
 }

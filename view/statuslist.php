@@ -90,7 +90,7 @@ if ($action === 'exclude') {
             $viewtypeenabled = (bool) \tool_usersuspension\config::get('enablecleanup');
             if (!$viewtypeenabled) {
                 $viewtypenotification = get_string('config:cleanup:disabled', 'tool_usersuspension');
-                $viewtypenotification .= '<br/>'. get_string('configoption:notactive', 'tool_usersuspension');
+                $viewtypenotification .= '<br/>' . get_string('configoption:notactive', 'tool_usersuspension');
             }
             break;
         case \tool_usersuspension\statustable::TOSUSPEND:
@@ -98,7 +98,7 @@ if ($action === 'exclude') {
             $viewtypeenabled = (bool) \tool_usersuspension\config::get('enablesmartdetect');
             if (!$viewtypeenabled) {
                 $viewtypenotification = get_string('config:smartdetect:disabled', 'tool_usersuspension');
-                $viewtypenotification .= '<br/>'. get_string('configoption:notactive', 'tool_usersuspension');
+                $viewtypenotification .= '<br/>' . get_string('configoption:notactive', 'tool_usersuspension');
             }
             break;
     }

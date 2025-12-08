@@ -38,11 +38,11 @@ namespace tool_usersuspension\processor;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class csv {
-
     /**
      * @var int SUSPEND MODE
      */
     const MODE_SUSPEND = 1;
+
     /**
      * @var int UNSUSPEND MODE
      */
@@ -53,43 +53,51 @@ class csv {
      * @var string
      */
     protected $file;
+
     /**
      * CSV read delimiter
      * @var string
      */
     protected $delimiter = ';';
+
     /**
      * CSV read enclosure
      * @var string
      */
     protected $enclosure = '"';
+
     /**
      * CSV read escape character
      * @var string
      */
     protected $escape = '\\';
+
     /**
      * CSV file handle
      * @var string
      */
     protected $fh;
+
     /**
      * Notification handler.
      * Should be a callable that takes a single string argument
      * @var \callable
      */
     protected $notifycallback;
+
     /**
      * User exclusion list.
      * This is a list of userids that are excluded from processing.
      * @var array list of userids
      */
     protected $exclusionlist;
+
     /**
      * Set test run.
      * @var bool
      */
     protected $testmode = false;
+
     /**
      * Set run mode.
      * @var bool
@@ -394,5 +402,4 @@ class csv {
         $this->notify("\t" . get_string('msg:user:not-found', 'tool_usersuspension'));
         return false;
     }
-
 }

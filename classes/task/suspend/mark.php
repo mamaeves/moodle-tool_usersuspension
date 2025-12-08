@@ -40,7 +40,6 @@ use tool_usersuspension\config;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mark extends \core\task\scheduled_task {
-
     /**
      * Return the localised name for this task
      *
@@ -56,22 +55,22 @@ class mark extends \core\task\scheduled_task {
      * @return void
      */
     public function execute() {
-        if (!(bool)config::get('enabled')) {
+        if (!(bool) config::get('enabled')) {
             mtrace(get_string('config:tool:disabled', 'tool_usersuspension'));
             return;
         }
-        if (!(bool)config::get('enablesmartdetect')) {
+        if (!(bool) config::get('enablesmartdetect')) {
             mtrace(get_string('config:smartdetect:disabled', 'tool_usersuspension'));
             return;
         }
-        $result = false;
-        $result = $result || \tool_usersuspension\util::mark_users_to_suspend();
-        // Now email any users in the warning period.
-        $result = $result || \tool_usersuspension\util::warn_users_of_suspension();
+
+        // First email any users in the warning period.
+        $warned = \tool_usersuspension\util::warn_users_of_suspension();
+        $suspended = \tool_usersuspension\util::mark_users_to_suspend();
+        $result = $warned || $suspended;
 
         if ($result) {
             \tool_usersuspension\util::set_lastrun_config('smartdetect');
         }
     }
-
 }

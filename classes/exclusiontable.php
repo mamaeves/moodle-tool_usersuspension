@@ -41,7 +41,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class exclusiontable extends \flexible_table {
-
     /**
      * Raw data array
      * @var array
@@ -65,7 +64,7 @@ class exclusiontable extends \flexible_table {
      */
     public function __construct() {
         global $USER;
-        parent::__construct(__CLASS__. '-' . $USER->id . '-' . $this->tabletype);
+        parent::__construct(__CLASS__ . '-' . $USER->id . '-' . $this->tabletype);
         $this->rawdata = [];
         $this->strdelete = get_string('action:delete-exclusion', 'tool_usersuspension');
         $this->no_sorting('action');
@@ -88,8 +87,7 @@ class exclusiontable extends \flexible_table {
 
         $this->setup();
 
-        switch ($this->tabletype)
-        {
+        switch ($this->tabletype) {
             case 'user':
                 $this->load_type_users($pagesize);
                 break;
@@ -137,8 +135,9 @@ class exclusiontable extends \flexible_table {
     protected function get_type_users_sql() {
         global $DB;
         $pfx = util::get_prefix();
-        $fields = 'e.id,e.type,u.id as refid,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
-                ' AS name,e.timecreated,null AS action';
+        $fields = 'e.id,e.type,u.id as refid,' .
+            $DB->sql_fullname('u.firstname', 'u.lastname') .
+            ' AS name,e.timecreated,null AS action';
         $from = '{tool_usersuspension_excl} e JOIN {user} u ON e.refid=u.id';
         $where = "type = :{$pfx}type";
         $sql = "SELECT $fields FROM $from WHERE $where";
@@ -155,13 +154,12 @@ class exclusiontable extends \flexible_table {
         $count = $DB->count_records('tool_usersuspension_excl', ['type' => 'user']);
         $this->pagesize($pagesize, $count);
 
-        list($sql, $params) = $this->get_type_users_sql();
+        [$sql, $params] = $this->get_type_users_sql();
         $sort = $this->get_sql_sort();
         if ($sort) {
             $sql .= " ORDER BY $sort";
         }
-        $records = $DB->get_records_sql($sql, $params,
-                $this->get_page_start(), $this->get_page_size());
+        $records = $DB->get_records_sql($sql, $params, $this->get_page_start(), $this->get_page_size());
         $this->rawdata = array_merge($this->rawdata, $records);
     }
 
@@ -188,13 +186,17 @@ class exclusiontable extends \flexible_table {
         $count = $DB->count_records('tool_usersuspension_excl', ['type' => 'user']);
         $this->pagesize($pagesize, $count);
 
-        list($sql, $params) = $this->get_type_cohorts_sql();
+        [$sql, $params] = $this->get_type_cohorts_sql();
         $sort = $this->get_sql_sort();
         if ($sort) {
             $sql .= " ORDER BY $sort";
         }
-        $records = $DB->get_records_sql($sql . $sort, $params,
-                $this->get_page_start(), $this->get_page_size());
+        $records = $DB->get_records_sql(
+            $sql . $sort,
+            $params,
+            $this->get_page_start(),
+            $this->get_page_size()
+        );
         $this->rawdata = array_merge($this->rawdata, $records);
     }
 
@@ -208,8 +210,8 @@ class exclusiontable extends \flexible_table {
         $count = $DB->count_records('tool_usersuspension_excl');
         $this->pagesize($pagesize, $count);
 
-        list($sql, $params) = $this->get_type_users_sql();
-        list($sql2, $params2) = $this->get_type_cohorts_sql();
+        [$sql, $params] = $this->get_type_users_sql();
+        [$sql2, $params2] = $this->get_type_cohorts_sql();
 
         $params = array_merge($params, $params2);
         $sql .= ' UNION ' . $sql2;
@@ -217,8 +219,12 @@ class exclusiontable extends \flexible_table {
         if ($sort) {
             $sql .= " ORDER BY $sort";
         }
-        $records = $DB->get_records_sql($sql, $params,
-                $this->get_page_start(), $this->get_page_size());
+        $records = $DB->get_records_sql(
+            $sql,
+            $params,
+            $this->get_page_start(),
+            $this->get_page_size()
+        );
         $this->rawdata = $records;
     }
 
@@ -271,7 +277,7 @@ class exclusiontable extends \flexible_table {
         global $OUTPUT;
         $actionstr = 'str' . $action;
         return '<img src="' . $OUTPUT->image_url($action, 'tool_usersuspension') .
-                '" title="' . $this->{$actionstr} . '"/>';
+            '" title="' . $this->{$actionstr} . '"/>';
     }
 
     /**
@@ -287,13 +293,13 @@ class exclusiontable extends \flexible_table {
         $onclick = '';
         if ($confirm) {
             $onclick = ' onclick="return confirm(\'' .
-                    get_string('action:confirm-'.$action.'-exclusion', 'tool_usersuspension') .
-                    '\');"';
+                get_string('action:confirm-' . $action . '-exclusion', 'tool_usersuspension') .
+                '\');"';
         }
-        return '<a ' . $onclick . 'href="' . new \moodle_url($this->baseurl,
-                ['action' => $action, 'id' => $row->id, 'sesskey' => sesskey()]) .
-                '" alt="' . $this->{$actionstr} .
-                '">' . $this->get_action_image($action) . '</a>';
+        $params = ['action' => $action, 'id' => $row->id, 'sesskey' => sesskey()];
+        return '<a ' . $onclick . 'href="' .
+            new \moodle_url($this->baseurl, $params) .
+            '" alt="' . $this->{$actionstr} .
+            '">' . $this->get_action_image($action) . '</a>';
     }
-
 }

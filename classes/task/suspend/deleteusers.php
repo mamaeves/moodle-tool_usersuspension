@@ -40,7 +40,6 @@ use tool_usersuspension\config;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class deleteusers extends \core\task\scheduled_task {
-
     /**
      * Return the localised name for this task
      *
@@ -56,11 +55,11 @@ class deleteusers extends \core\task\scheduled_task {
      * @return void
      */
     public function execute() {
-        if (!(bool)config::get('enabled')) {
+        if (!(bool) config::get('enabled')) {
             mtrace(get_string('config:tool:disabled', 'tool_usersuspension'));
             return;
         }
-        if (!(bool)config::get('enablecleanup')) {
+        if (!(bool) config::get('enablecleanup')) {
             mtrace(get_string('config:cleanup:disabled', 'tool_usersuspension'));
             return false;
         }
@@ -72,5 +71,4 @@ class deleteusers extends \core\task\scheduled_task {
             \tool_usersuspension\util::set_lastrun_config('cleanup');
         }
     }
-
 }

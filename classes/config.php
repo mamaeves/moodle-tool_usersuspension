@@ -38,7 +38,6 @@ namespace tool_usersuspension;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class config {
-
     /**
      *
      * @var whether or not config has been loaded yet
@@ -99,5 +98,4 @@ class config {
         self::$config = null;
         self::init();
     }
-
 }

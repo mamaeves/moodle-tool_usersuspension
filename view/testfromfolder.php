@@ -28,7 +28,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 use tool_usersuspension\config;
 use tool_usersuspension\processor\csv as csvprocessor;
@@ -41,6 +41,7 @@ use tool_usersuspension\processor\csv as csvprocessor;
 function trtrace($msg) {
     echo html_writer::div($msg, 'alert alert-info');
 }
+
 /**
  * Write action links for this script.
  * @param moodle_url|string $pageurl
@@ -48,14 +49,17 @@ function trtrace($msg) {
 function write_actiontype_links($pageurl) {
     $actiontypes = ['suspend', 'unsuspend'];
     foreach ($actiontypes as $type) {
-        echo html_writer::link(new moodle_url($pageurl, ['actiontype' => $type]),
-                get_string('testfromfolder:' . $type, 'tool_usersuspension'), []);
+        echo html_writer::link(
+            new moodle_url($pageurl, ['actiontype' => $type]),
+            get_string('testfromfolder:' . $type, 'tool_usersuspension'),
+            []
+        );
         echo '<br/>';
     }
 }
 
 admin_externalpage_setup('toolusersuspension');
-$context       = \context_system::instance();
+$context = \context_system::instance();
 
 $thispageurl = new moodle_url('/' . $CFG->admin . '/tool/usersuspension/view/testfromfolder.php', []);
 
@@ -81,38 +85,75 @@ if (!in_array($actiontype, $actiontypes)) {
     echo '</div>';
     write_actiontype_links($thispageurl);
 
-    echo $OUTPUT->heading(get_string('testing:suspendfromfolder', 'tool_usersuspension'), 4);
+    echo $OUTPUT->heading(
+        get_string('testing:suspendfromfolder', 'tool_usersuspension'),
+        4
+    );
 
-    if (!(bool)config::get('enabled')) {
-        echo html_writer::div(get_string('config:tool:disabled', 'tool_usersuspension'), 'alert alert-danger');
+    if (!(bool) config::get('enabled')) {
+        echo html_writer::div(
+            get_string('config:tool:disabled', 'tool_usersuspension'),
+            'alert alert-danger'
+        );
     } else {
-        echo html_writer::div(get_string('config:tool:enabled', 'tool_usersuspension'), 'alert alert-info');
+        echo html_writer::div(
+            get_string('config:tool:enabled', 'tool_usersuspension'),
+            'alert alert-info'
+        );
     }
 
-    if (!(bool)config::get('enablefromfolder')) {
-        echo html_writer::div(get_string('config:fromfolder:disabled', 'tool_usersuspension'), 'alert alert-danger');
+    if (!(bool) config::get('enablefromfolder')) {
+        echo html_writer::div(
+            get_string('config:fromfolder:disabled', 'tool_usersuspension'),
+            'alert alert-danger'
+        );
     } else {
-        echo html_writer::div(get_string('config:fromfolder:enabled', 'tool_usersuspension'), 'alert alert-info');
+        echo html_writer::div(
+            get_string('config:fromfolder:enabled', 'tool_usersuspension'),
+            'alert alert-info'
+        );
     }
 
     if (is_dir(config::get('uploadfolder'))) {
-        echo html_writer::div(get_string('config:uploadfolder:exists', 'tool_usersuspension',
-                config::get('uploadfolder')), 'alert alert-info');
+        echo html_writer::div(
+            get_string(
+                'config:uploadfolder:exists',
+                'tool_usersuspension',
+                config::get('uploadfolder')
+            ),
+            'alert alert-info'
+        );
     } else {
-        echo html_writer::div(get_string('config:uploadfolder:not-exists', 'tool_usersuspension',
-                config::get('uploadfolder')), 'alert alert-danger');
+        echo html_writer::div(
+            get_string(
+                'config:uploadfolder:not-exists',
+                'tool_usersuspension',
+                config::get('uploadfolder')
+            ),
+            'alert alert-danger'
+        );
     }
 
     $uploadedfile = config::get('uploadfolder') . '/' . config::get('uploadfilename');
     if (!file_exists($uploadedfile) || is_dir($uploadedfile)) {
-        echo html_writer::div(get_string('config:uploadfile:not-exists', 'tool_usersuspension',
-                $uploadedfile), 'alert alert-danger');
+        echo html_writer::div(
+            get_string(
+                'config:uploadfile:not-exists',
+                'tool_usersuspension',
+                $uploadedfile
+            ),
+            'alert alert-danger'
+        );
     } else {
-        echo html_writer::div(get_string('config:uploadfile:exists', 'tool_usersuspension',
-                $uploadedfile), 'alert alert-info');
+        echo html_writer::div(
+            get_string('config:uploadfile:exists', 'tool_usersuspension', $uploadedfile),
+            'alert alert-info'
+        );
         if (!is_readable($uploadedfile)) {
-            echo html_writer::div(get_string('msg:file-not-readable', 'tool_usersuspension',
-                    $uploadedfile), 'alert alert-danger');
+            echo html_writer::div(
+                get_string('msg:file-not-readable', 'tool_usersuspension', $uploadedfile),
+                'alert alert-danger'
+            );
         }
 
         $choices = \csv_import_reader::get_delimiter_list();
@@ -127,11 +168,15 @@ if (!in_array($actiontype, $actiontypes)) {
         $proc->process();
 
         if (is_writable($uploadedfile)) {
-            echo html_writer::div(get_string('msg:file-would-delete', 'tool_usersuspension',
-                    $uploadedfile), 'alert alert-success');
+            echo html_writer::div(
+                get_string('msg:file-would-delete', 'tool_usersuspension', $uploadedfile),
+                'alert alert-success'
+            );
         } else {
-            echo html_writer::div(get_string('msg:file-not-writeable', 'tool_usersuspension',
-                    $uploadedfile), 'alert alert-danger');
+            echo html_writer::div(
+                get_string('msg:file-not-writeable', 'tool_usersuspension', $uploadedfile),
+                'alert alert-danger'
+            );
         }
     }
     echo '</div>';
@@ -144,37 +189,71 @@ if (!in_array($actiontype, $actiontypes)) {
     echo '</div>';
     write_actiontype_links($thispageurl);
 
-    echo $OUTPUT->heading(get_string('testing:unsuspendfromfolder', 'tool_usersuspension'), 4);
+    echo $OUTPUT->heading(
+        get_string('testing:unsuspendfromfolder', 'tool_usersuspension'),
+        4
+    );
 
-    if (!(bool)config::get('enabled')) {
-        echo html_writer::div(get_string('config:tool:disabled', 'tool_usersuspension'), 'alert alert-danger');
+    if (!(bool) config::get('enabled')) {
+        echo html_writer::div(
+            get_string('config:tool:disabled', 'tool_usersuspension'),
+            'alert alert-danger'
+        );
     } else {
-        echo html_writer::div(get_string('config:tool:enabled', 'tool_usersuspension'), 'alert alert-info');
+        echo html_writer::div(
+            get_string('config:tool:enabled', 'tool_usersuspension'),
+            'alert alert-info'
+        );
     }
 
-    if (!(bool)config::get('enableunsuspendfromfolder')) {
-        echo html_writer::div(get_string('config:unsuspendfromfolder:disabled', 'tool_usersuspension'), 'alert alert-danger');
+    if (!(bool) config::get('enableunsuspendfromfolder')) {
+        echo html_writer::div(
+            get_string('config:unsuspendfromfolder:disabled', 'tool_usersuspension'),
+            'alert alert-danger'
+        );
     } else {
-        echo html_writer::div(get_string('config:unsuspendfromfolder:enabled', 'tool_usersuspension'), 'alert alert-info');
+        echo html_writer::div(
+            get_string('config:unsuspendfromfolder:enabled', 'tool_usersuspension'),
+            'alert alert-info'
+        );
     }
 
     if (is_dir(config::get('uploadfolder'))) {
-        echo html_writer::div(get_string('config:uploadfolder:exists', 'tool_usersuspension',
-                config::get('uploadfolder')), 'alert alert-info');
+        echo html_writer::div(
+            get_string(
+                'config:uploadfolder:exists',
+                'tool_usersuspension',
+                config::get('uploadfolder')
+            ),
+            'alert alert-info'
+        );
     } else {
-        echo html_writer::div(get_string('config:uploadfolder:not-exists', 'tool_usersuspension',
-                config::get('uploadfolder')), 'alert alert-danger');
+        echo html_writer::div(
+            get_string(
+                'config:uploadfolder:not-exists',
+                'tool_usersuspension',
+                config::get('uploadfolder')
+            ),
+            'alert alert-danger'
+        );
     }
 
     $uploadedfile = config::get('uploadfolder') . '/' . config::get('unsuspenduploadfilename');
     if (!file_exists($uploadedfile) || is_dir($uploadedfile)) {
-        echo html_writer::div('CSV File "'.$uploadedfile.'" does not exist', 'alert alert-danger');
+        echo html_writer::div(
+            'CSV File "' . $uploadedfile . '" does not exist',
+            'alert alert-danger'
+        );
     } else {
-        echo html_writer::div(get_string('config:uploadfile:exists', 'tool_usersuspension',
-                $uploadedfile), 'alert alert-info');
+        echo html_writer::div(
+            get_string('config:uploadfile:exists', 'tool_usersuspension', $uploadedfile),
+            'alert alert-info'
+        );
         if (!is_readable($uploadedfile)) {
-            echo html_writer::div(get_string('msg:file-not-readable', 'tool_usersuspension',
-                    $uploadedfile), 'alert alert-danger');
+            echo html_writer::div(
+                get_string('msg:file-not-readable', 'tool_usersuspension', $uploadedfile),
+                'alert alert-danger'
+            );
         }
 
         $choices = \csv_import_reader::get_delimiter_list();
@@ -189,11 +268,15 @@ if (!in_array($actiontype, $actiontypes)) {
         $proc->process();
 
         if (is_writable($uploadedfile)) {
-            echo html_writer::div(get_string('msg:file-would-delete', 'tool_usersuspension',
-                    $uploadedfile), 'alert alert-danger');
+            echo html_writer::div(
+                get_string('msg:file-would-delete', 'tool_usersuspension', $uploadedfile),
+                'alert alert-danger'
+            );
         } else {
-            echo html_writer::div(get_string('msg:file-not-writeable', 'tool_usersuspension',
-                    $uploadedfile), 'alert alert-danger');
+            echo html_writer::div(
+                get_string('msg:file-not-writeable', 'tool_usersuspension', $uploadedfile),
+                'alert alert-danger'
+            );
         }
     }
     echo '</div>';

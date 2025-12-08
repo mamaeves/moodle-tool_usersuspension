@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/user/selector/lib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class current extends \user_selector_base {
-
     /**
      * Candidate users
      * @param string $search
@@ -57,17 +56,17 @@ class current extends \user_selector_base {
         }
 
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
-        list($wherecondition, $params) = $this->search_sql($search, 'u');
+        [$wherecondition, $params] = $this->search_sql($search, 'u');
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
-        list($insql, $uparams) = $DB->get_in_or_equal($excludeids, SQL_PARAMS_NAMED, 'exclude', true, 0);
+        [$insql, $uparams] = $DB->get_in_or_equal($excludeids, SQL_PARAMS_NAMED, 'exclude', true, 0);
         $params = array_merge($params, $uparams);
 
         $sql = " FROM {user} u WHERE {$wherecondition} AND u.id {$insql}";
 
-        list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
+        [$sort, $sortparams] = users_order_by_sql('u', $search, $this->accesscontext);
         $order = ' ORDER BY ' . $sort;
 
         if (!$this->is_validating()) {
@@ -95,5 +94,4 @@ class current extends \user_selector_base {
         $options = parent::get_options();
         return $options;
     }
-
 }

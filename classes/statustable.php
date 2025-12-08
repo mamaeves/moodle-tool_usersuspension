@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/user/filters/lib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class statustable extends \table_sql {
-
     /**
      * table type identifier for suspended users
      */
@@ -212,8 +211,9 @@ class statustable extends \table_sql {
         $this->define_columns($cols);
         $this->define_headers($headers);
 
-        $fields = 'u.id,u.username,u.email,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
-                ' AS name,u.lastlogin,u.timemodified,u.suspended,u.deleted,NULL AS action';
+        $fields = 'u.id,u.username,u.email,' .
+            $DB->sql_fullname('u.firstname', 'u.lastname') .
+            ' AS name,u.lastlogin,u.timemodified,u.suspended,u.deleted,NULL AS action';
         $where = 'deleted = :deleted';
         $params = ['deleted' => 0];
         if (!empty($excludeddomains)) {
@@ -222,7 +222,7 @@ class statustable extends \table_sql {
         $this->add_exclude_users($where, $params);
 
         // And apply filter(s).
-        list($fsqls, $fparams) = $this->userfiltering->get_sql_filter();
+        [$fsqls, $fparams] = $this->userfiltering->get_sql_filter();
         if (!empty($fsqls)) {
             $where .= 'AND ' . $fsqls;
             $params = $params + $fparams;
@@ -257,14 +257,15 @@ class statustable extends \table_sql {
         $this->define_columns($cols);
         $this->define_headers($headers);
 
-        $fields = 'u.id,u.username,u.email,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
-                ' AS name,u.lastlogin,u.timemodified,u.suspended,u.deleted,NULL AS action';
+        $fields = 'u.id,u.username,u.email,' .
+            $DB->sql_fullname('u.firstname', 'u.lastname') .
+            ' AS name,u.lastlogin,u.timemodified,u.suspended,u.deleted,NULL AS action';
         $where = 'suspended = :suspended AND deleted = :deleted';
         $params = ['suspended' => 1, 'deleted' => 0];
         $this->add_exclude_users($where, $params);
 
         // And apply filter(s).
-        list($fsqls, $fparams) = $this->userfiltering->get_sql_filter();
+        [$fsqls, $fparams] = $this->userfiltering->get_sql_filter();
         if (!empty($fsqls)) {
             $where .= 'AND ' . $fsqls;
             $params = $params + $fparams;
@@ -303,7 +304,7 @@ class statustable extends \table_sql {
         switch ($DB->get_dbfamily()) {
             case 'mssql':
                 $sqlpartgreatest = 'IIF(u.lastaccess >= u.firstaccess, ' .
-                        'IIF(u.timemodified >= u.lastaccess, u.timemodified, u.lastaccess), u.firstaccess)';
+                    'IIF(u.timemodified >= u.lastaccess, u.timemodified, u.lastaccess), u.firstaccess)';
                 break;
             default:
                 $sqlpartgreatest = 'GREATEST(u.firstaccess, u.lastaccess, u.timemodified)';
@@ -311,23 +312,24 @@ class statustable extends \table_sql {
         }
 
         $suspendinsql = '(' . config::get('smartdetect_suspendafter') .
-                ' - (:now - ' . $sqlpartgreatest . ')) AS suspendin,';
+            ' - (:now - ' . $sqlpartgreatest . ')) AS suspendin,';
         $suspendonsql = '(' . $sqlpartgreatest . ' + ' .
-                config::get('smartdetect_suspendafter') . ') as suspendon,';
-        $fields = 'u.id,u.username,u.email,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
-                ' AS name,u.lastlogin,u.firstaccess,u.lastaccess,u.timemodified,u.suspended,u.deleted,' .
-                $sqlpartgreatest . ' AS timedetect,' .
-                $suspendinsql .
-                $suspendonsql .
-                'NULL as action';
+            config::get('smartdetect_suspendafter') . ') as suspendon,';
+        $fields = 'u.id,u.username,u.email,' .
+            $DB->sql_fullname('u.firstname', 'u.lastname') .
+            ' AS name,u.lastlogin,u.firstaccess,u.lastaccess,u.timemodified,u.suspended,u.deleted,' .
+            $sqlpartgreatest . ' AS timedetect,' .
+            $suspendinsql .
+            $suspendonsql .
+            'NULL as action';
 
-        list($where, $params) = util::get_suspension_query(false);
-        list($where2, $params2) = util::get_suspension_query(true);
+        [$where, $params] = util::get_suspension_query(false);
+        [$where2, $params2] = util::get_suspension_query(true);
         $where = "(({$where}) OR ({$where2}))";
         $params = ['now' => time()] + $params + $params2;
 
         // And apply filter(s).
-        list($fsqls, $fparams) = $this->userfiltering->get_sql_filter();
+        [$fsqls, $fparams] = $this->userfiltering->get_sql_filter();
         if (!empty($fsqls)) {
             $where .= ' AND ' . $fsqls;
             $params = $params + $fparams;
@@ -366,7 +368,7 @@ class statustable extends \table_sql {
         switch ($DB->get_dbfamily()) {
             case 'mssql':
                 $sqlpartgreatest = 'IIF(u.lastaccess >= u.firstaccess, ' .
-                        'IIF(u.timemodified >= u.lastaccess, u.timemodified, u.lastaccess), u.firstaccess)';
+                    'IIF(u.timemodified >= u.lastaccess, u.timemodified, u.lastaccess), u.firstaccess)';
                 break;
             default:
                 $sqlpartgreatest = 'GREATEST(u.firstaccess, u.lastaccess, u.timemodified)';
@@ -374,23 +376,24 @@ class statustable extends \table_sql {
         }
 
         $deleteinsql = '(' . config::get('cleanup_deleteafter') .
-                ' - (:now - u.timemodified)) AS deletein,';
+            ' - (:now - u.timemodified)) AS deletein,';
         $deleteonsql = '(' . $sqlpartgreatest . ' + ' .
-                config::get('cleanup_deleteafter') . ') as deleteon,';
-        $fields = 'u.id,u.username,u.email,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
-                ' AS name,u.lastlogin,u.firstaccess,u.lastaccess,u.timemodified,u.suspended,u.deleted,' .
-                $sqlpartgreatest . ' AS timedetect,' .
-                $deleteinsql .
-                $deleteonsql .
-                'NULL as action';
+            config::get('cleanup_deleteafter') . ') as deleteon,';
+        $fields = 'u.id,u.username,u.email,' .
+            $DB->sql_fullname('u.firstname', 'u.lastname') .
+            ' AS name,u.lastlogin,u.firstaccess,u.lastaccess,u.timemodified,u.suspended,u.deleted,' .
+            $sqlpartgreatest . ' AS timedetect,' .
+            $deleteinsql .
+            $deleteonsql .
+            'NULL as action';
 
-        list($where, $params) = util::get_deletion_query(false);
-        list($where2, $params2) = util::get_deletion_query(true);
+        [$where, $params] = util::get_deletion_query(false);
+        [$where2, $params2] = util::get_deletion_query(true);
         $where = "(({$where}) OR ({$where2}))";
         $params = ['now' => time()] + $params + $params2;
 
         // And apply filter(s).
-        list($fsqls, $fparams) = $this->userfiltering->get_sql_filter();
+        [$fsqls, $fparams] = $this->userfiltering->get_sql_filter();
         if (!empty($fsqls)) {
             $where .= ' AND ' . $fsqls;
             $params = $params + $fparams;
@@ -512,7 +515,7 @@ class statustable extends \table_sql {
         global $OUTPUT;
         $actionstr = 'str' . $action;
         return '<img src="' . $OUTPUT->image_url($action, 'tool_usersuspension') .
-                '" title="' . $this->{$actionstr} . '"/>';
+            '" title="' . $this->{$actionstr} . '"/>';
     }
 
     /**
@@ -524,10 +527,10 @@ class statustable extends \table_sql {
      */
     protected function get_action($row, $action) {
         $actionstr = 'str' . $action;
-        return '<a href="' . new \moodle_url($this->baseurl, ['action' => $action,
-                    'id' => $row->id, 'sesskey' => sesskey(), 'type' => $this->displaytype]) .
-                '" alt="' . $this->{$actionstr} .
-                '">' . $this->get_action_image($action) . '</a>';
+        $params = ['action' => $action, 'id' => $row->id, 'sesskey' => sesskey(), 'type' => $this->displaytype];
+        $url = new \moodle_url($this->baseurl, $params);
+        return '<a href="' . $url->out() . '" alt="' . $this->{$actionstr} .
+        '">' . $this->get_action_image($action) . '</a>';
     }
 
     /**

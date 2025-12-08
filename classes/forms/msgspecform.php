@@ -42,7 +42,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class msgspecform extends \moodleform {
-
     /**
      * form definition
      */
@@ -55,8 +54,13 @@ class msgspecform extends \moodleform {
         $mform->setDefault('msg', $this->_customdata['msgtype']);
 
         if ($this->_customdata['customcurrent'] === false) {
-            $mform->addElement('static', '_content', '', '<div class="alert alert-warning">' .
-                    get_string('msgspec:current:none', 'tool_usersuspension') . '</div>');
+            $mform->addElement(
+                'static',
+                '_content',
+                '',
+                '<div class="alert alert-warning">' .
+                get_string('msgspec:current:none', 'tool_usersuspension') . '</div>'
+            );
         }
 
         $basemsg = '';
@@ -115,13 +119,15 @@ class msgspecform extends \moodleform {
         $mform->addElement('editor', 'content', get_string('content'), $options);
         $mform->setType('content', PARAM_RAW);
         if ($this->_customdata['customcurrent'] !== false) {
-            $mform->setDefault('content', [
-                'text' => $this->_customdata['customcurrent'],
-                'format' => FORMAT_HTML,
-            ]);
+            $mform->setDefault(
+                'content',
+                [
+                    'text' => $this->_customdata['customcurrent'],
+                    'format' => FORMAT_HTML,
+                ]
+            );
         }
 
         $this->add_action_buttons(true, get_string('update'));
     }
-
 }

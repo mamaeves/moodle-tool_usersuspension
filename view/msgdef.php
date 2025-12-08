@@ -97,9 +97,12 @@ if (!empty($msgtype) && empty($action)) {
     echo '<div><strong>' . get_string('msgspec:current', 'tool_usersuspension') . '</strong></div>';
     if ($customcurrent !== false) {
         echo '<div class="ml-auto">' . html_writer::link(
-                new moodle_url('/' . $CFG->admin . '/tool/usersuspension/view/msgdef.php',
-                    ['msg' => $msgtype, 'action' => 'delete']),
-                get_string('msgspec:current:delete', 'tool_usersuspension')) . '</div>';
+            new moodle_url(
+                '/' . $CFG->admin . '/tool/usersuspension/view/msgdef.php',
+                ['msg' => $msgtype, 'action' => 'delete']
+            ),
+            get_string('msgspec:current:delete', 'tool_usersuspension')
+        ) . '</div>';
     }
     echo '</div>';
     echo '</div>';

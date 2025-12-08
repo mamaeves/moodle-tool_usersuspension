@@ -42,7 +42,6 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class msgdeleteform extends \moodleform {
-
     /**
      * form definition
      */
@@ -53,11 +52,23 @@ class msgdeleteform extends \moodleform {
         $mform->setType('action', PARAM_ALPHA);
         $mform->setConstant('action', 'delete');
 
-        $mform->addElement('static', '_confirm', '', '<div class="alert alert-info">' .
-                get_string('msgspec:current:delete:help', 'tool_usersuspension') . '</div>');
-        $mform->addElement('advcheckbox', 'confirm', get_string('msgspec:current:delete', 'tool_usersuspension'));
+        $mform->addElement(
+            'static',
+            '_confirm',
+            '',
+            '<div class="alert alert-info">' .
+            get_string('msgspec:current:delete:help', 'tool_usersuspension') . '</div>'
+        );
 
-        $this->add_action_buttons(true, get_string('csv:upload:continue', 'tool_usersuspension'));
+        $mform->addElement(
+            'advcheckbox',
+            'confirm',
+            get_string('msgspec:current:delete', 'tool_usersuspension')
+        );
+
+        $this->add_action_buttons(
+            true,
+            get_string('csv:upload:continue', 'tool_usersuspension')
+        );
     }
-
 }

@@ -16,9 +16,6 @@
 
 namespace tool_usersuspension;
 
-use core\session\utility\cookie_helper;
-use html_writer;
-
 /**
  * Tasks performed by tool usersuspension
  *
@@ -33,14 +30,13 @@ use html_writer;
  *
  * */
 class hook_callbacks {
-
     /**
      * Callback to recover $SESSION->wantsurl.
      *
      * @param \core\hook\output\before_http_headers $hook
      */
     public static function before_http_headers(
-            \core\hook\output\before_http_headers $hook,
+        \core\hook\output\before_http_headers $hook,
     ): void {
         global $SESSION;
 

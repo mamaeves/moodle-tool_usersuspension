@@ -40,7 +40,6 @@ use tool_usersuspension\config;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class logclean extends \core\task\scheduled_task {
-
     /**
      * Return the localised name for this task
      *
@@ -56,11 +55,10 @@ class logclean extends \core\task\scheduled_task {
      * @return void
      */
     public function execute() {
-        if (!(bool)config::get('enablecleanlogs')) {
+        if (!(bool) config::get('enablecleanlogs')) {
             mtrace(get_string('config:cleanlogs:disabled', 'tool_usersuspension'));
             return;
         }
         \tool_usersuspension\util::clean_logs();
     }
-
 }
