@@ -26,6 +26,7 @@
  * @author      RvD <helpdesk@sebsoft.nl>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// @codingStandardsIgnoreFile Due to Moodle failing the "class implements" alphabetically itself.
 
 namespace tool_usersuspension\privacy;
 
